@@ -1,0 +1,7 @@
+(executable
+  (name calc)
+  (preprocess (staged_pps ppx_deriving.show))
+  (flags (:standard -warn-error -A)))
+
+(ocamllex
+  (modules lexer))
