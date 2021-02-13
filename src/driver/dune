@@ -1,0 +1,12 @@
+(executable
+ (name driver)
+ (public_name driver)
+ (libraries compiler)
+ (preprocess
+  (staged_pps
+    ppx_import
+    ppx_deriving.show))
+  (flags (:standard -warn-error -A)))
+
+(cram
+  (deps %{bin:driver}))

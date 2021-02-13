@@ -1,0 +1,35 @@
+language: minimal
+
+os: linux
+
+dist: focal
+
+cache:
+  directories:
+  - $HOME/.opam/
+
+script: 
+  - ./compile.sh
+
+notifications:
+  email: false
+
+before_install:
+  - opam init -y --compiler=4.11.1
+  - eval `opam config env`
+  - opam install -y dune menhir camomile ppx_import ppx_deriving ppx_expect llvm
+  - sudo chmod +x compile.sh
+
+matrix:
+  include:
+    - os: linux
+      dist: focal
+      addons:
+        apt:
+          packages:
+            - clang
+            - llvm-dev
+            - cmake
+            - m4
+            - python2
+            - opam

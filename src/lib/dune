@@ -1,0 +1,20 @@
+(library
+ (name compiler)
+ (wrapped false)
+ (preprocess
+  (staged_pps
+    ppx_import
+    ppx_deriving.show))
+ (flags
+  (:standard -warn-error -A)))
+
+(ocamllex
+ (modules lexer))
+
+(menhir
+ (modules parser)
+ (flags (
+   ;; token declarations in the grammar specification are translated
+   ;; into a definition of the token type
+   --only-tokens
+ )))
