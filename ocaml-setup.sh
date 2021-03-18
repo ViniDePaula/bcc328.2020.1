@@ -18,6 +18,7 @@ opam_packages=(
     # llvm
 )
 
-opam init
+opam init --bare --yes
+opam switch create 4.11.2
 eval $(opam env)
-opam install "${opam_packages[@]}"
+opam install "${opam_packages[@]}" --yes

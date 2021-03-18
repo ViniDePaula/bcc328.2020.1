@@ -1,7 +1,7 @@
 (* handling command line arguments: implementation *)
 
 let filename = ref None
-let lexer = ref true
+let lexer = ref false
 
 let get_filename () =
   !filename
