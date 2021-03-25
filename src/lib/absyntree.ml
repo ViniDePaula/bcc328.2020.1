@@ -30,7 +30,20 @@ let rec tree_of_exp exp =
   | IntExp x -> mktr (sprintf "IntExp %i" x) []
   | OpExp (op, l, r) -> mktr (sprintf "OpExp %s" (stringfy_operator op)) [tree_of_lexp l; tree_of_lexp r]
 
+and tree_of_fundec (typeid, params, body) =
+  mktr
+    "Fun"
+    [ tree_of_typeid typeid;
+      mktr "Formals" (List.map tree_of_typeid params);
+      tree_of_lexp body
+    ]
+
+and tree_of_typeid (type_, id) =
+  mktr (sprintf "%s:%s" (name id) (show_type_ type_)) []
+
 (* Convert an anotated expression to a generic tree *)
 and tree_of_lexp (_, x) = tree_of_exp x
+
+and tree_of_lfundec (_, x) = tree_of_fundec x
 
 and tree_of_lsymbol (_, x) = tree_of_symbol x

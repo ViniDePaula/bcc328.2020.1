@@ -7,6 +7,3 @@
     ppx_import
     ppx_deriving.show))
   (flags (:standard -warn-error -A)))
-
-(cram
-  (deps %{bin:driver}))
