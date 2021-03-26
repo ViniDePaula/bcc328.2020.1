@@ -29,6 +29,25 @@ let rec tree_of_exp exp =
   match exp with
   | IntExp x -> mktr (sprintf "IntExp %i" x) []
   | OpExp (op, l, r) -> mktr (sprintf "OpExp %s" (stringfy_operator op)) [tree_of_lexp l; tree_of_lexp r]
+  | IdExp x -> mktr (sprintf "IdExp %s" (Symbol.name x)) []
+  | IfExp (x, y, z) -> mktr (sprintf "If") 
+    [
+      tree_of_lexp x;
+      tree_of_lexp y;
+      tree_of_lexp z
+    ]
+  | FuncExp (x, f) -> mktr 
+    (sprintf "FuncExp %s" (Symbol.name x)) 
+    [
+      mktr "ExpList" (List.map tree_of_lexp f)
+    ] 
+  | DeclExp (x, f, ff) -> mktr 
+    (sprintf "DeclExp %s" (Symbol.name x)) 
+    [
+      tree_of_lexp f; 
+      mktr (sprintf "in") [];
+      tree_of_lexp ff
+    ]
 
 and tree_of_fundec (typeid, params, body) =
   mktr
