@@ -57,6 +57,11 @@ and tree_of_fundec (typeid, params, body) =
       tree_of_lexp body
     ]
 
+and tree_of_funs funs =
+  match funs with
+  | FunsList (x) ->  
+      mktr "FunsList" (List.map tree_of_lfundec x)
+
 and tree_of_typeid (type_, id) =
   mktr (sprintf "%s:%s" (name id) (show_type_ type_)) []
 
@@ -66,3 +71,5 @@ and tree_of_lexp (_, x) = tree_of_exp x
 and tree_of_lfundec (_, x) = tree_of_fundec x
 
 and tree_of_lsymbol (_, x) = tree_of_symbol x
+
+and tree_of_lfuns (_, x) = tree_of_funs x

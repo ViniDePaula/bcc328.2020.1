@@ -23,6 +23,10 @@ type exp =
 and fundec = (type_ * symbol) * (type_ * symbol) list * lexp
   [@@deriving show]
 
+and funs = 
+  | FunsList of (lfundec) list 
+  [@@deriving show]
+
 and type_ =
   | Int
   | Bool
@@ -34,4 +38,6 @@ and lexp = exp loc
 and lfundec = fundec loc
   [@@deriving show]
 
+and lfuns = funs loc 
+  [@@deriving show]
 

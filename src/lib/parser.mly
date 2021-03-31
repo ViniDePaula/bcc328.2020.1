@@ -17,7 +17,7 @@
 %token                 LET
 %token                 IN
 
-%start <Absyn.lfundec> program
+%start <Absyn.lfuns> program
 
 %nonassoc LT
 %left PLUS
@@ -25,7 +25,7 @@
 %%
 
 program:
-| x=fundec EOF { x }
+| x=funs EOF { x }
 
 exp:
 | x=LITINT                       { $loc , Absyn.IntExp x           }
@@ -44,6 +44,12 @@ exps:
 
 fundec:
 | x=typeid LPAREN p=typeids RPAREN EQ b=exp { $loc , (x, p, b) }
+
+funs:
+| x=fundecs                     { $loc, Absyn.FunsList x }
+
+fundecs:
+| x=nonempty_list(fundec)   { x }
 
 typeid:
 | INT x=ID   { (Absyn.Int, x) }
