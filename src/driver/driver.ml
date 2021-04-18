@@ -37,7 +37,11 @@ let main () =
       let tree = Absyntree.flat_nodes (Absyntree.tree_of_lfuns ast) in
       let boxtree = Tree.box_of_tree tree in
       print_endline (Box.string_of_box boxtree);
-      print_endline (Tree.string_of_tree tree)
+      print_endline (Tree.string_of_tree tree);
+      print_endline "Semantic analysis:";
+      print_endline "============================================================";
+      Semantic.to_funsList ast; 
+      print_endline "============================================================";
   with
   | Error.Error (loc, msg) ->
      Format.printf "%a error: %s\n" Location.pp_location loc msg;
