@@ -85,7 +85,7 @@ let rec check_exp (lexp) (vtable) (ftable) =
     (match Symbol.look x ftable with
     | Some res -> 
       let listTypes = check_exps y vtable ftable in
-      let lengthList = List.length listTypes in
+      let lengthList = List.length listTypes in       (*check list*)
       res
     | None -> Error.error (Location.loc lexp) "Function %s not found in ftable" (Symbol.name x))
 
