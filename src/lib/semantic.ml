@@ -22,15 +22,16 @@ let rec get_types typeIds =
 let get_fun (typeid, params, body) = 
   let (f, t0) = get_typeId typeid in 
   let paramsList = get_types params in
-    (f, paramsList, t0)
+  let all = paramsList, t0 in
+    (f, all)
 
 let rec get_funs funs = 
   match funs with
   | [(loc, fundec)] -> 
-    let (f, _, t) = get_fun fundec in 
-    Symbol.enter f  t Symbol.empty
+    let (f, t) = get_fun fundec in 
+    Symbol.enter f t Symbol.empty
   | fundec :: rest -> 
-    let (f, _, t) = get_fun (convertr fundec) in 
+    let (f, t) = get_fun (convertr fundec) in 
     let table = get_funs rest in 
     match Symbol.look f table with 
     | Some _ -> Error.error (Location.loc fundec) "function %s defined more than once" (Symbol.name f)
@@ -47,6 +48,19 @@ let rec check_typeids (typeIds) (f) (body) =
     match Symbol.look x vtable with 
     | Some _ -> Error.error (Location.loc body) "typeId %s defined more than once" (Symbol.name x)
     | None -> Symbol.enter x t vtable
+
+let rec check_type_list list1 list2 loc = 
+  match list1,list2 with 
+  | [item1], [item2] -> 
+    if item1 == item2 then () 
+      else 
+        Error.error (Location.loc loc) "Param type not match"
+  | item1 :: rest1, item2 :: rest2 -> 
+    if item1 == item2 then
+      let x = check_type_list (rest1) (rest2) in
+      ()
+    else 
+      Error.error (Location.loc loc) "Param type not match"
 
 let rec check_exp (lexp) (vtable) (ftable) =
   match lexp with 
@@ -83,10 +97,16 @@ let rec check_exp (lexp) (vtable) (ftable) =
 
   | (_, Absyn.FuncExp (x, y)) -> 
     (match Symbol.look x ftable with
-    | Some res -> 
+    | Some (typeList, returnType) -> 
       let listTypes = check_exps y vtable ftable in
-      let lengthList = List.length listTypes in       (*check list*)
-      res
+      let lengthList = List.length listTypes in
+      let lengthOriginal = List.length typeList in 
+      if (lengthList == lengthOriginal)
+        then 
+          let typeCheck = check_type_list typeList listTypes lexp in
+          returnType;
+      else
+        Error.error (Location.loc lexp) "Invalid params size"
     | None -> Error.error (Location.loc lexp) "Function %s not found in ftable" (Symbol.name x))
 
   | (_, Absyn.DeclExp (x, f, ff)) -> 
@@ -122,7 +142,7 @@ let check_program (loc, funs) =
     let ftable = get_funs x in  
     check_funs x ftable;
     match Symbol.look (Symbol.symbol "main") ftable with
-    | Some res -> 
+    | Some (typeList, res) -> 
       if res != Absyn.Int
         then
           Error.error (loc) "Main function must be type Int"

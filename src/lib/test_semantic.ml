@@ -67,3 +67,16 @@ let%expect_test _ =
     check "  int x(int d) = 100 
       int y(int z) = m(10) ";
     [%expect{| :2.21-2.26 error: Function m not found in ftable |}];
+
+    check " int function(int a, int b, bool m) = a + b
+      int main(int x) = function(x, 10, 10 < 11)";
+    [%expect{| |}];
+
+    check " int function(int a, int b, bool m) = a + b
+      int main(int x) = function(x, 10 < 11)";
+    [%expect{| :2.24-2.44 error: Invalid params size |}];
+
+    check " int function(int a) = a + 10
+      int main(bool x) = function(x)";
+    [%expect{| :2.25-2.36 error: Param type not match |}];
+
