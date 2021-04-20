@@ -116,10 +116,17 @@ let rec check_funs funs ftable =
     check_fun (convertr fundec) ftable;
     check_funs rest ftable
 
-let check_program funs = 
+let check_program (loc, funs) = 
   match funs with
   | FunsList (x) ->
     let ftable = get_funs x in  
-    check_funs x ftable;;
+    check_funs x ftable;
+    match Symbol.look (Symbol.symbol "main") ftable with
+    | Some res -> 
+      if res != Absyn.Int
+        then
+          Error.error (loc) "Main function must be type Int"
+      else
+        ()
+    | None _ -> Error.error (loc) "Main function not found"
 
-let to_funsList (_, x) = check_program x
